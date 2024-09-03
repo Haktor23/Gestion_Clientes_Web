@@ -29,7 +29,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue
     Long id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     String username;
     @Column(nullable = false)
     String password;

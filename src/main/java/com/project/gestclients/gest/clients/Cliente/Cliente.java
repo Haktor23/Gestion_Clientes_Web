@@ -26,8 +26,10 @@ public class Cliente {
     String nombre;
     @Column(nullable = false)
     String apellidos;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     String dni;
+    @Column(nullable = false)
+    String telefono;
     @Column(nullable = false)
     String direccion;
     @Column(nullable = false)
