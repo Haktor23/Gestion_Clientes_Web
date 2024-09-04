@@ -2,9 +2,12 @@ package com.project.gestclients.gest.clients.Auth;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.core.Authentication;
 
 import com.project.gestclients.gest.clients.Jwt.JwtService;
 import com.project.gestclients.gest.clients.User.Role;
@@ -40,17 +43,56 @@ public class AuthService {
                         throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
                 }
 
+                // Asignar rol por defecto si el campo role está vacío
+                String roleStr = (request.getRole() == null || request.getRole().trim().isEmpty()) ? "USER"
+                                : request.getRole().toUpperCase();
+
+                // Convertir el rol del String a un Enum
+                Role role;
+                try {
+                        role = Role.valueOf(roleStr);
+                } catch (IllegalArgumentException e) {
+                        throw new IllegalArgumentException("Rol no válido: " + request.getRole());
+                }
+
+                // Crear y guardar el usuario
                 User user = User.builder()
                                 .username(request.getUsername())
                                 .password(passwordEncoder.encode(request.getPassword()))
-                                .role(Role.USER)
+                                .role(role)
                                 .build();
 
                 userRepository.save(user);
 
+                // Generar y retornar la respuesta de autenticación
                 return AuthResponse.builder()
                                 .token(jwtService.getToken(user))
                                 .build();
         }
 
+        public void deleteUserById(Long userId) {
+                // Obtener el usuario autenticado
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                String currentUsername = authentication.getName();
+
+                // Verificar si el usuario autenticado es un admin
+                User currentUser = userRepository.findByUsername(currentUsername)
+                                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+
+                if (!currentUser.getRole().equals(Role.ADMIN)) {
+                        throw new SecurityException("No tienes permisos para eliminar usuarios.");
+                }
+
+                // Verificar si el usuario a eliminar existe
+                User userToDelete = userRepository.findById(userId)
+                                .orElseThrow(() -> new UsernameNotFoundException("Usuario a eliminar no encontrado"));
+
+                // Verificar que no se está intentando eliminar a sí mismo
+                if (currentUser.getId().equals(userToDelete.getId())) {
+                        throw new SecurityException("No puedes eliminar tu propio usuario.");
+                }
+
+                // Eliminar al usuario
+                userRepository.delete(userToDelete);
+        }
 }

@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 public class User implements UserDetails {
     @Id
     @GeneratedValue
-    Long id;
+    private Long id;
     @Column(nullable = false, unique = true)
     String username;
     @Column(nullable = false)
