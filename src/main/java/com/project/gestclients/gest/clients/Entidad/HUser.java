@@ -1,8 +1,9 @@
-package com.project.gestclients.gest.clients.User;
+package com.project.gestclients.gest.clients.Entidad;
 
 import java.util.Collection;
 import java.util.List;
 
+import com.project.gestclients.gest.clients.User.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +26,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
+public class HUser implements UserDetails {
     @Id
     @GeneratedValue
     private Long id;

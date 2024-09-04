@@ -1,4 +1,4 @@
-package com.project.gestclients.gest.clients.Cliente;
+package com.project.gestclients.gest.clients.DTO;
 
 import java.sql.Date;
 

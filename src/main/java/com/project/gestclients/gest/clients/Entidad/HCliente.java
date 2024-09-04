@@ -1,4 +1,4 @@
-package com.project.gestclients.gest.clients.Cliente;
+package com.project.gestclients.gest.clients.Entidad;
 
 import java.sql.Date;
 
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "clientes")
-public class Cliente {
+public class HCliente {
     @Id
     @GeneratedValue
     Long id;
